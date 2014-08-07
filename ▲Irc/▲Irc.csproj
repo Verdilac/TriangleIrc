@@ -7,7 +7,7 @@
     <ProjectGuid>{FE66201A-59E3-4934-9543-A80927CE9DCA}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>_Irc</RootNamespace>
+    <RootNamespace>TriangleIrc</RootNamespace>
     <AssemblyName>▲Irc</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
