@@ -2,10 +2,11 @@
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 
 namespace TriangleIrcLib
 {
-    class IrcServerConnection
+    public class IrcServerConnection
     {
         private TcpClient tcpClient;
         private NetworkStream tcpStream;
@@ -34,7 +35,7 @@ namespace TriangleIrcLib
         /// </summary>
         /// <param name="hostname">The DNS name of the remote host to which you intend to connect.</param>
         /// <param name="port">The port number of the remote host to which you intend to connect.</param>
-        public void Connect(string hostname, int port)
+        public void Connect(string hostname, int port = 6667)
         {
             if (Connected)
                 throw new InvalidOperationException("Client is already connected to server.");
@@ -58,12 +59,21 @@ namespace TriangleIrcLib
         /// <param name="message">UTF-8 encoded bytes.</param>
         public void Send(byte[] message)
         {
+            // TODO: make it nonblocking
             lock (tcpStream)
             {
                 tcpStream.Write(message, 0, message.Length);
                 byte[] CLFR = { 13, 10 };
                 tcpStream.Write(CLFR, 0, 2);
             }
+        }
+
+        private void HandleIrcMessageData(byte[] ircMessageData)
+        {
+            string ircMessageString = Encoding.UTF8.GetString(ircMessageData);
+            IrcMessage ircMessage = IrcMessage.Parse(ircMessageString);
+
+            throw new NotImplementedException("Further message handling is not implemented yet.");
         }
 
         /// <summary>
@@ -96,7 +106,7 @@ namespace TriangleIrcLib
                 {
                     byte[] ircMessageData = new byte[i - ircMessageStart];
                     Array.Copy(data, ircMessageStart, ircMessageData, 0, i - ircMessageStart);
-                        throw new NotImplementedException("Message handling is not implemented yet.");
+                    HandleIrcMessageData(ircMessageData);
                     i += 2;
                     ircMessageStart = i;
                 }
