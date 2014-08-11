@@ -9,7 +9,7 @@ namespace TriangleIrcLib
     /// <summary>
     /// Specifies command for which the method will be invoked.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Method, Inherited = true, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
     public sealed class IrcCommandAttribute : Attribute
     {
         /// <summary>

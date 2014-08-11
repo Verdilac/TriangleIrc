@@ -41,7 +41,7 @@
   <ItemGroup>
     <Compile Include="IrcCommandAtribute.cs" />
     <Compile Include="IrcMessage.cs" />
-    <Compile Include="IrcServerConnection.cs" />
+    <Compile Include="IrcServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

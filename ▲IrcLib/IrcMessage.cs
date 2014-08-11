@@ -47,10 +47,10 @@ namespace TriangleIrcLib
         /// <summary>
         /// Initializes a new instance of the TriangleIrcLib.IrcMessage class.
         /// </summary>
-        /// <param name="prefix">True origin of message. (optional)</param>
+        /// <param name="prefix">True origin of message.</param>
         /// <param name="command">IRC Command.</param>
-        /// <param name="trailing">Up to 15 command parameters. (optional)</param>
-        /// <param name="parameters">Trailing parameter which can contain spaces. (optional)</param>
+        /// <param name="trailing">Up to 15 command parameters.</param>
+        /// <param name="parameters">Trailing parameter which can contain spaces.</param>
         public IrcMessage(string prefix, string command, string[] parameters, string trailing)
         {
             Prefix = prefix;
@@ -80,7 +80,7 @@ namespace TriangleIrcLib
         }
 
         /// <summary>
-        /// Validates IRC message and converts it into new TriangleIrcLib.IrcMessage instance.
+        /// Validates the IRC message string and converts it into the new TriangleIrcLib.IrcMessage instance.
         /// </summary>
         /// <param name="message">IRC message</param>
         public static IrcMessage Parse(string message)
@@ -89,6 +89,7 @@ namespace TriangleIrcLib
             prefix = command = trailing = null;
             string[] parameters = null;
 
+            // Look for prefix.
             int prefixEnd = -1;
             if (message.StartsWith(":"))
             {
@@ -96,12 +97,14 @@ namespace TriangleIrcLib
                 prefix = message.Substring(1, prefixEnd - 1);
             }
 
+            // Look for trailing parameter.
             int trailingStart = message.IndexOf(" :");
             if (trailingStart > 0)
                 trailing = message.Substring(trailingStart + 2);
             else
                 trailingStart = message.Length;
 
+            // Look for command and non-trailing parameters.
             string[] commandAndParameters = message.Substring(
                 prefixEnd + 1, trailingStart - prefixEnd - 1).Split(' ');
 
@@ -112,6 +115,9 @@ namespace TriangleIrcLib
 
             if (commandAndParameters.Length > 1)
                 parameters = commandAndParameters.Skip(1).ToArray();
+
+            if (parameters != null && parameters.Length + (trailing != null ? 1 : 0) > 15)
+                throw new FormatException("There cannot be more than 15 parameters.");
 
             return new IrcMessage(prefix, command, parameters, trailing);
         }
