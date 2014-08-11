@@ -3,6 +3,9 @@ using System.Linq;
 
 namespace TriangleIrcLib
 {
+    /// <summary>
+    /// Represent IRC server message.
+    /// </summary>
     public class IrcMessage
     {
         /// <summary>

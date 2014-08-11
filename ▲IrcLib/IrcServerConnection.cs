@@ -3,15 +3,25 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Reflection;
+using System.Collections.Generic;
 
 namespace TriangleIrcLib
 {
-    public class IrcServerConnection
+    /// <summary>
+    /// Represent IRC server connection.
+    /// </summary>
+    /// <typeparam name="T">The type of class containing methods assigned with TriangleIrcLib.IrcCommandAtribute.</typeparam>
+    public class IrcServerConnection<T> where T : class
     {
+
         private TcpClient tcpClient;
         private NetworkStream tcpStream;
         private byte[] tcpStreamBuffer = new byte[4096];
         private MemoryStream ircMessagesBuffer;
+
+        private T ircCommandsHandler;
+        private Dictionary<string, MethodInfo> ircCommandMethods = new Dictionary<string, MethodInfo>();
 
         public event EventHandler Disconnect;
         protected virtual void OnDisconnect(EventArgs e = null)
@@ -28,6 +38,32 @@ namespace TriangleIrcLib
             {
                 return tcpClient != null && tcpClient.Connected;
             }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of TriangleIrcLib.IrcServerConnection supplied by T class instance.
+        /// </summary>
+        /// <param name="instantion"></param>
+        public IrcServerConnection(T instantion) 
+        {
+            this.ircCommandsHandler = instantion;
+            Type t = typeof(T);
+
+            MethodInfo[] methodsInfo = t.GetMethods();
+            foreach (MethodInfo mInfo in methodsInfo)
+            {
+                IrcCommandAttribute attribute = (IrcCommandAttribute)mInfo.GetCustomAttribute(typeof(IrcCommandAttribute));
+
+                if (attribute == null)
+                    continue;
+                else
+                {
+                    ircCommandMethods.Add(attribute.Command, mInfo);
+                }
+            }
+
+            if (!ircCommandMethods.ContainsKey("default"))
+                throw new ArgumentException("Provided class type does not provide method assigned with \"default\" TriangleIrcLib.IrcCommandAtribute.");
         }
 
         /// <summary>
@@ -68,18 +104,22 @@ namespace TriangleIrcLib
             }
         }
 
-        private void HandleIrcMessageData(byte[] ircMessageData)
+        private void HandleMssageData(byte[] messageData)
         {
-            string ircMessageString = Encoding.UTF8.GetString(ircMessageData);
-            IrcMessage ircMessage = IrcMessage.Parse(ircMessageString);
+            string messageString = Encoding.UTF8.GetString(messageData);
+            IrcMessage message = IrcMessage.Parse(messageString);
 
-            throw new NotImplementedException("Further message handling is not implemented yet.");
+            MethodInfo mInfo;
+            if (ircCommandMethods.ContainsKey(message.Command))
+                mInfo = ircCommandMethods[message.Command];
+            else
+                mInfo = ircCommandMethods["default"];
+
+            Object[] obj = new Object[] { message };
+
+            mInfo.Invoke(ircCommandsHandler, obj);
         }
 
-        /// <summary>
-        /// TcpClient.BeginRead callback which stores incoming data and pass complete IRC messages for further handling.
-        /// </summary>
-        /// <param name="result">Asynchronous operation status</param>
         private void TcpStreamReadCallback(IAsyncResult result)
         {
             int tcpStreamDataLenght = tcpStream.EndRead(result);
@@ -92,7 +132,7 @@ namespace TriangleIrcLib
             }
 
             int ircMessagesBufferLenght = (int)ircMessagesBuffer.Length;
-            int totalDataLenght = +tcpStreamDataLenght;
+            int totalDataLenght = ircMessagesBufferLenght + tcpStreamDataLenght;
             byte[] data = new byte[totalDataLenght];
 
             ircMessagesBuffer.ToArray().CopyTo(data, 0);
@@ -104,9 +144,9 @@ namespace TriangleIrcLib
             {
                 if (data[i] == 13 && data[i + 1] == 10)
                 {
-                    byte[] ircMessageData = new byte[i - ircMessageStart];
-                    Array.Copy(data, ircMessageStart, ircMessageData, 0, i - ircMessageStart);
-                    HandleIrcMessageData(ircMessageData);
+                    byte[] messageData = new byte[i - ircMessageStart];
+                    Array.Copy(data, ircMessageStart, messageData, 0, i - ircMessageStart);
+                    HandleMssageData(messageData);
                     i += 2;
                     ircMessageStart = i;
                 }
