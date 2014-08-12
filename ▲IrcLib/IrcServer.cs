@@ -107,14 +107,16 @@ namespace TriangleIrcLib
         {
             try
             {
-                tcpClient.EndConnect(result);
+                tcpClient.EndConnect(result);               
 
                 ircMessagesBuffer = new MemoryStream();
                 tcpSendBuffer = new MemoryStream();
                 tcpStream = tcpClient.GetStream();
 
-                tcpStream.BeginRead(tcpStreamBuffer, 0, tcpStreamBuffer.Length, new AsyncCallback(TcpStreamReadCallback), null);
                 OnConnected();
+
+                tcpStream.BeginRead(tcpStreamBuffer, 0, tcpStreamBuffer.Length, new AsyncCallback(TcpStreamReadCallback), null);
+                
             }
             catch (Exception)
             {
@@ -223,7 +225,7 @@ namespace TriangleIrcLib
 
             // Look for the whole message and handle it.
             int ircMessageStart = 0;
-            for (int i = 0; i < data.Length; i++)
+            for (int i = 0; i < data.Length - 1; i++)
             {
                 if (data[i] == 13 && data[i + 1] == 10)
                 {

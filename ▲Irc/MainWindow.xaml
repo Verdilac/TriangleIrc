@@ -2,7 +2,20 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        
+    <Grid x:Name="MainContent">
+        <DockPanel LastChildFill="True">
+            <TextBox
+                Name="inputBox"
+                Height="23"
+                TextWrapping="Wrap"
+                Text=""
+                DockPanel.Dock="Bottom" 
+                KeyUp="inputBox_KeyUp"
+                VerticalAlignment="Bottom"/>
+
+            <ScrollViewer>
+                <TextBlock x:Name="textBlock" TextWrapping="Wrap" Text=""/>
+            </ScrollViewer>
+        </DockPanel>
     </Grid>
 </Window>

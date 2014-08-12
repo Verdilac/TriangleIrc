@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="IrcCommandAtribute.cs" />
     <Compile Include="IrcMessage.cs" />
+    <Compile Include="IrcMessagePrefix.cs" />
     <Compile Include="IrcServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

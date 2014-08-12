@@ -11,7 +11,7 @@ namespace TriangleIrcLib
         /// <summary>
         /// True origin of message.
         /// </summary>
-        public string Prefix
+        public IrcMessagePrefix Prefix
         {
             get;
             private set;
@@ -53,7 +53,10 @@ namespace TriangleIrcLib
         /// <param name="parameters">Trailing parameter which can contain spaces.</param>
         public IrcMessage(string prefix, string command, string[] parameters, string trailing)
         {
-            Prefix = prefix;
+            if (prefix == null || prefix.Length == 0)
+                Prefix = null;
+            else
+                Prefix = IrcMessagePrefix.Parse(prefix);
             Command = command;
             Parameters = parameters;
             Trailing = trailing;
@@ -66,8 +69,8 @@ namespace TriangleIrcLib
         public override string ToString()
         {
             string retVal = "";
-            if (!String.IsNullOrEmpty(Prefix))
-                retVal += ":" + Prefix + " ";
+            if (Prefix != null)
+                retVal += Prefix + " ";
 
             retVal += Command;
             if (Parameters != null && Parameters.Length > 0)
