@@ -5,7 +5,7 @@
     <Grid x:Name="MainContent">
         <DockPanel LastChildFill="True">
             <TextBox
-                Name="inputBox"
+                Name="InputBox"
                 Height="23"
                 TextWrapping="Wrap"
                 Text=""
@@ -14,7 +14,7 @@
                 VerticalAlignment="Bottom"/>
 
             <ScrollViewer>
-                <TextBlock x:Name="textBlock" TextWrapping="Wrap" Text=""/>
+                <TextBlock x:Name="TextBlock" TextWrapping="Wrap" Text=""/>
             </ScrollViewer>
         </DockPanel>
     </Grid>

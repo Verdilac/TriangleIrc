@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Windows;
 using System.Windows.Input;
 using TriangleIrcLib;
 
@@ -8,9 +7,9 @@ namespace TriangleIrc
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
-        IrcServer<MainWindow> ircServer;
+        readonly IrcServer<MainWindow> ircServer;
 
         public MainWindow()
         {
@@ -18,46 +17,43 @@ namespace TriangleIrc
             ircServer = new IrcServer<MainWindow>(this);
             ircServer.Connected += ircServer_Connected;
 
-            textBlock.Text += "Connecting...\n";
-            ircServer.Connect("irc.6irc.net");
+            TextBlock.Text += "Connecting...\n";
+            ircServer.Connect("irc.freenode.net");
         }
 
         void ircServer_Connected(object sender, EventArgs e)
         {
-            this.Dispatcher.Invoke(new Action(() =>
+            Dispatcher.Invoke(() =>
             {
-                textBlock.Text += "Connected.\n";
+                TextBlock.Text += "Connected.\n";
                 ircServer.Send("PASS *");
                 ircServer.Send("USER TriangleIrc 8 * :TriangleIrc");
                 ircServer.Send("NICK jakubek");
-            }));
+            });
         }
 
         private void inputBox_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.Key == System.Windows.Input.Key.Enter)
-            {
-                ircServer.Send(inputBox.Text);
-                inputBox.Text = string.Empty;
-            }
+            if (e.Key != Key.Enter)
+                return;
+
+            ircServer.Send(InputBox.Text);
+            InputBox.Text = string.Empty;
         }
 
         [IrcCommand("default")]
         public void Default(IrcMessage msg)
         {
-            this.Dispatcher.Invoke(new Action(() =>
+            Dispatcher.Invoke(() =>
             {
-                textBlock.Text += msg.ToString() + '\n';
-            }));
+                TextBlock.Text += msg.ToString() + '\n';
+            });
         }
 
         [IrcCommand("PING")]
         public void Ping(IrcMessage msg)
         {
-            this.Dispatcher.Invoke(new Action(() =>
-            {
-                ircServer.Send(new IrcMessage(null, "PONG", null, msg.Trailing));
-            }));
+            Dispatcher.Invoke(() => ircServer.Send(new IrcMessage(null, "PONG", null, msg.Trailing)));
         }
     }
 }

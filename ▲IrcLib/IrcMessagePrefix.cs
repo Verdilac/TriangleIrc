@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Text.RegularExpressions;
 
 namespace TriangleIrcLib
 {
@@ -41,7 +36,7 @@ namespace TriangleIrcLib
 
         public static IrcMessagePrefix Parse(string prefix)
         {
-            if (prefix == null || prefix.Length == 0)
+            if (string.IsNullOrEmpty(prefix))
                 throw new ArgumentNullException();
 
             string name, user, host;

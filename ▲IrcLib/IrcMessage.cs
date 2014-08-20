@@ -53,10 +53,7 @@ namespace TriangleIrcLib
         /// <param name="parameters">Trailing parameter which can contain spaces.</param>
         public IrcMessage(string prefix, string command, string[] parameters, string trailing)
         {
-            if (prefix == null || prefix.Length == 0)
-                Prefix = null;
-            else
-                Prefix = IrcMessagePrefix.Parse(prefix);
+            Prefix = String.IsNullOrEmpty(prefix) ? null : IrcMessagePrefix.Parse(prefix);
             Command = command;
             Parameters = parameters;
             Trailing = trailing;
@@ -88,8 +85,8 @@ namespace TriangleIrcLib
         /// <param name="message">IRC message</param>
         public static IrcMessage Parse(string message)
         {
-            string prefix, command, trailing;
-            prefix = command = trailing = null;
+            string trailing;
+            string prefix = trailing = null;
             string[] parameters = null;
 
             // Look for prefix.
@@ -108,13 +105,12 @@ namespace TriangleIrcLib
                 trailingStart = message.Length;
 
             // Look for command and non-trailing parameters.
-            string[] commandAndParameters = message.Substring(
-                prefixEnd + 1, trailingStart - prefixEnd - 1).Split(' ');
+            var commandAndParameters = message.Substring(prefixEnd + 1, trailingStart - prefixEnd - 1).Split(' ');
 
             if (commandAndParameters.Length == 0)
                 throw new FormatException("There is no command in IRC message.");
 
-            command = commandAndParameters.First();
+            var command = commandAndParameters.First();
 
             if (commandAndParameters.Length > 1)
                 parameters = commandAndParameters.Skip(1).ToArray();
