@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace TriangleIrcLib
 {
@@ -42,6 +44,11 @@ namespace TriangleIrcLib
         {
             get;
             private set;
+        }
+
+        public bool IsCtcp
+        {
+            get { return Trailing != null && Trailing[0] == 1 && Trailing[Trailing.Length - 1] == 1; }
         }
 
         /// <summary>

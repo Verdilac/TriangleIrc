@@ -48,11 +48,11 @@ namespace TriangleIrcLib
 
             if (nameEnd > 0)
             {
-                name = prefix.Substring(0, nameEnd - 1);
+                name = prefix.Substring(0, nameEnd);
 
                 int userEnd = prefix.IndexOf('@');
-                user = prefix.Substring(nameEnd, userEnd - 1);
-                host = prefix.Substring(userEnd);
+                user = prefix.Substring(nameEnd + 1, userEnd - nameEnd - 1);
+                host = prefix.Substring(userEnd + 1);
             }
             else
             {

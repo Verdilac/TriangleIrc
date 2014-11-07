@@ -1,0 +1,39 @@
+﻿<Window x:Class="TriangleIrc.JoinServerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="JoinServerWindow" SizeToContent="Height" Width="300">
+    <StackPanel>
+        <DockPanel>
+            <Label>Server Name</Label>
+            <TextBox Name="ServerName"></TextBox>
+        </DockPanel>
+        <DockPanel>
+            <Label>Server Address</Label>
+            <TextBox Name="ServerAddress"></TextBox>
+        </DockPanel>
+        <DockPanel>
+            <Label>Server Port</Label>
+            <TextBox Name="ServerPort"></TextBox>
+        </DockPanel>
+        <DockPanel>
+            <Label>Server Password</Label>
+            <TextBox Name="ServerPassword"></TextBox>
+        </DockPanel>
+        <DockPanel>
+            <Label>Nickname</Label>
+            <TextBox Name="Nickname"></TextBox>
+        </DockPanel>
+        <DockPanel>
+            <Label>Username</Label>
+            <TextBox Name="Username"></TextBox>
+        </DockPanel>
+        <DockPanel>
+            <Label>Realname</Label>
+            <TextBox Name="Realname"></TextBox>
+        </DockPanel>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Name="ConfirmButton" Content="Create" Click="ConfirmButton_Click"></Button>
+            <Button Name="CancelButton" Content="Cancel" Click="CancelButton_Click"></Button>
+        </StackPanel>
+    </StackPanel>
+</Window>

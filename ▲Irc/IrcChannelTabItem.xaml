@@ -1,0 +1,23 @@
+﻿<TabItem x:Class="TriangleIrc.IrcChannelTabItem"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <DockPanel>
+            <TextBox
+                Name="UserInputTextBox"
+                TextWrapping="Wrap"
+                DockPanel.Dock="Bottom"
+                Text=""
+                KeyUp="UserInputTextBox_OnKeyUp"
+                VerticalAlignment="Bottom"/>
+
+            <ScrollViewer>
+                <TextBlock Name="ChannelTextBlock" TextWrapping="Wrap" Text=""/>
+            </ScrollViewer>
+        </DockPanel>
+    </Grid>
+</TabItem>

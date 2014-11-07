@@ -1,6 +1,4 @@
-﻿using System;
-using System.Windows.Input;
-using TriangleIrcLib;
+﻿using System.Windows;
 
 namespace TriangleIrc
 {
@@ -9,51 +7,27 @@ namespace TriangleIrc
     /// </summary>
     public partial class MainWindow
     {
-        readonly IrcServer<MainWindow> ircServer;
-
         public MainWindow()
         {
             InitializeComponent();
-            ircServer = new IrcServer<MainWindow>(this);
-            ircServer.Connected += ircServer_Connected;
-
-            TextBlock.Text += "Connecting...\n";
-            ircServer.Connect("irc.freenode.net");
         }
 
-        void ircServer_Connected(object sender, EventArgs e)
+        private void JoinServerButton_OnClick(object sender, RoutedEventArgs e)
         {
-            Dispatcher.Invoke(() =>
-            {
-                TextBlock.Text += "Connected.\n";
-                ircServer.Send("PASS *");
-                ircServer.Send("USER TriangleIrc 8 * :TriangleIrc");
-                ircServer.Send("NICK jakubek");
-            });
-        }
-
-        private void inputBox_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.Key != Key.Enter)
+            var dialog = new JoinServerWindow();
+            if (dialog.ShowDialog() != true)
                 return;
 
-            ircServer.Send(InputBox.Text);
-            InputBox.Text = string.Empty;
+            var result = dialog.Result;
+            var tab = new IrcServerTabItem(result);
+            ServersTabControl.Items.Add(tab);
+            tab.Focus();
+            tab.Initialize();
         }
 
-        [IrcCommand("default")]
-        public void Default(IrcMessage msg)
+        private void SettingsButton_Click(object sender, RoutedEventArgs e)
         {
-            Dispatcher.Invoke(() =>
-            {
-                TextBlock.Text += msg.ToString() + '\n';
-            });
-        }
 
-        [IrcCommand("PING")]
-        public void Ping(IrcMessage msg)
-        {
-            Dispatcher.Invoke(() => ircServer.Send(new IrcMessage(null, "PONG", null, msg.Trailing)));
         }
     }
 }

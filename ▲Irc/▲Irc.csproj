@@ -54,6 +54,20 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="IIrcChannel.cs" />
+    <Compile Include="UserInputEventArgs.cs" />
+    <Page Include="IrcChannelTabItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="IrcServerTabItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="JoinServerWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -61,6 +75,16 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IrcChannelTabItem.xaml.cs">
+      <DependentUpon>IrcChannelTabItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="IrcServerTabItem.xaml.cs">
+      <DependentUpon>IrcServerTabItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ServerJoinData.cs" />
+    <Compile Include="JoinServerWindow.xaml.cs">
+      <DependentUpon>JoinServerWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

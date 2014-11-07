@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Net;
 using System.Net.Sockets;
+using System.Net;
 using System.Text;
 using System.Reflection;
 using System.Collections.Generic;
@@ -50,7 +50,7 @@ namespace TriangleIrcLib
                 return tcpClient != null && tcpClient.Connected;
             }
         }
-
+        
         /// <summary>
         /// Initializes a new instance of TriangleIrcLib.IrcServerConnection supplied by T class instance.
         /// </summary>
@@ -60,15 +60,21 @@ namespace TriangleIrcLib
             ircCommandsHandler = instantion;
             var t = typeof(T);
 
-            MethodInfo[] methodsInfo = t.GetMethods();
+            var methodsInfo = t.GetMethods();
             foreach (var methodInfo in methodsInfo)
             {
-                var attribute = (IrcCommandAttribute) methodInfo.GetCustomAttribute(typeof(IrcCommandAttribute));
+                var attributes = (IrcCommandAttribute[]) methodInfo.GetCustomAttributes(typeof(IrcCommandAttribute));
 
-                if (attribute == null)
+                if (attributes == null)
                     continue;
 
-                ircCommandMethods.Add(attribute.Command, methodInfo);
+                foreach (var attribute in attributes)
+                {
+                    if (ircCommandMethods.ContainsKey(attribute.Command))
+                        throw new ArgumentException("Provided class type can only provide one function per IRC command");
+
+                    ircCommandMethods.Add(attribute.Command, methodInfo);
+                }
             }
 
             if (!ircCommandMethods.ContainsKey("default"))
@@ -85,10 +91,25 @@ namespace TriangleIrcLib
             if (IsConnected)
                 throw new InvalidOperationException("Client is already connected to server.");
 
-            if (tcpClient == null)
-                tcpClient = new TcpClient();
+            try
+            {
+                if (tcpClient == null)
+                    tcpClient = new TcpClient();
+            
+                tcpClient.BeginConnect(hostname, port, ConnectCallback, null);
+            }
+            catch (Exception)
+            {
+                OnConnectionFailed(new EventArgs());
+            }
+            
+        }
 
-            tcpClient.BeginConnect(hostname, port, ConnectCallback, null);
+        public void Login(string pass, sbyte mode, string nickname, string username, string realname)
+        {
+            Send(String.Format("PASS {0}", String.IsNullOrEmpty(pass) ? "*" : pass));
+            Send(String.Format("NICK {0}", nickname));
+            Send(String.Format("USER {0} {1} * :{2}", username, mode, realname));
         }
 
         public void Disconnect()
@@ -183,11 +204,11 @@ namespace TriangleIrcLib
         private void HandleMssageData(byte[] messageData)
         {
             // Parse message data.
-            string messageString = Encoding.UTF8.GetString(messageData);
-            IrcMessage ircMsg = IrcMessage.Parse(messageString);
+            var messageString = Encoding.UTF8.GetString(messageData);
+            var ircMsg = IrcMessage.Parse(messageString);
 
             // Use the default method if there is no method binded to the command.
-            MethodInfo mInfo = ircCommandMethods.ContainsKey(ircMsg.Command) ? ircCommandMethods[ircMsg.Command] : ircCommandMethods["default"];
+            var mInfo = ircCommandMethods.ContainsKey(ircMsg.Command) ? ircCommandMethods[ircMsg.Command] : ircCommandMethods["default"];
 
             // Invoke command-binded method.
             var obj = new Object[] { ircMsg };
@@ -197,7 +218,7 @@ namespace TriangleIrcLib
 
         private void TcpStreamReadCallback(IAsyncResult result)
         {
-            int tcpStreamDataLenght = tcpStream.EndRead(result);
+            var tcpStreamDataLenght = tcpStream.EndRead(result);
 
             if (tcpStreamDataLenght == 0)   // Triggers whenever server disconects.
             {
@@ -206,8 +227,8 @@ namespace TriangleIrcLib
                 return;
             }
 
-            int ircMessagesBufferLenght = (int)ircMessagesBuffer.Length;
-            int totalDataLenght = ircMessagesBufferLenght + tcpStreamDataLenght;
+            var ircMessagesBufferLenght = (int)ircMessagesBuffer.Length;
+            var totalDataLenght = ircMessagesBufferLenght + tcpStreamDataLenght;
             var data = new byte[totalDataLenght];
 
             // Copy stored and received data in a new buffer.
@@ -217,8 +238,8 @@ namespace TriangleIrcLib
             ircMessagesBuffer.SetLength(0);
 
             // Look for the whole message and handle it.
-            int ircMessageStart = 0;
-            for (int i = 0; i < data.Length - 1; i++)
+            var ircMessageStart = 0;
+            for (var i = 0; i < data.Length - 1; i++)
             {
                 if (data[i] != 13 || data[i + 1] != 10)
                     continue;

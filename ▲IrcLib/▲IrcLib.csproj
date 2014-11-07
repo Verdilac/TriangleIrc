@@ -40,10 +40,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IrcCommandAtribute.cs" />
+    <Content Include="NumericResponseParser.py" />
+    <Compile Include="Response\IrcError.cs" />
     <Compile Include="IrcMessage.cs" />
     <Compile Include="IrcMessagePrefix.cs" />
     <Compile Include="IrcServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Response\IrcResponse.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

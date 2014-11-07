@@ -2,20 +2,16 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="350" Width="525">
-    <Grid x:Name="MainContent">
-        <DockPanel LastChildFill="True">
-            <TextBox
-                Name="InputBox"
-                Height="23"
-                TextWrapping="Wrap"
-                Text=""
-                DockPanel.Dock="Bottom" 
-                KeyUp="inputBox_KeyUp"
-                VerticalAlignment="Bottom"/>
-
-            <ScrollViewer>
-                <TextBlock x:Name="TextBlock" TextWrapping="Wrap" Text=""/>
-            </ScrollViewer>
-        </DockPanel>
-    </Grid>
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+            <Button Content="Join Server"
+                    Name="JoinServerButton"
+                    Click="JoinServerButton_OnClick"/>
+            <Button Content="Settings"
+                    Name="SettingsButton"
+                    Click="SettingsButton_Click"/>
+        </StackPanel>
+        <TabControl Name="ServersTabControl">
+        </TabControl>
+    </DockPanel>
 </Window>
